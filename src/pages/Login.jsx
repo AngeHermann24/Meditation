@@ -20,10 +20,18 @@ const Login = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password, fullName)
-        if (error) throw error
-        alert('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.')
+        // Inscription
+        const { error: signUpError } = await signUp(email, password, fullName)
+        if (signUpError) throw signUpError
+        
+        // Connexion automatique après inscription
+        const { error: signInError } = await signIn(email, password)
+        if (signInError) throw signInError
+        
+        // Redirection vers le dashboard
+        navigate('/dashboard')
       } else {
+        // Connexion normale
         const { error } = await signIn(email, password)
         if (error) throw error
         navigate('/dashboard')
