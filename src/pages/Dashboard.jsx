@@ -25,17 +25,32 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // Fetch current week
+      // Fetch current week (where today is between start_date and end_date)
+      const today = new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
       const { data: weekData, error: weekError } = await supabase
         .from('weeks')
         .select('*, chapters(*)')
-        .gte('end_date', new Date().toISOString())
+        .lte('start_date', today)
+        .gte('end_date', today)
         .order('start_date', { ascending: true })
         .limit(1)
         .maybeSingle()
 
       if (!weekError && weekData) {
         setCurrentWeek(weekData)
+      } else {
+        // If no current week, get the next upcoming week
+        const { data: nextWeekData } = await supabase
+          .from('weeks')
+          .select('*, chapters(*)')
+          .gte('start_date', today)
+          .order('start_date', { ascending: true })
+          .limit(1)
+          .maybeSingle()
+        
+        if (nextWeekData) {
+          setCurrentWeek(nextWeekData)
+        }
       }
 
       // Fetch verse of the day

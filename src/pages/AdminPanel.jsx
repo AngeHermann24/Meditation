@@ -628,26 +628,26 @@ const AdminPanel = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Panneau d'administration</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Panneau d'administration</h1>
       </div>
 
       {/* Tabs */}
-      <div className="card">
-        <div className="flex space-x-1 border-b border-gray-200">
+      <div className="card overflow-hidden">
+        <div className="flex space-x-1 border-b border-gray-200 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => {
             const Icon = tab.icon
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors ${
+                className={`flex items-center space-x-2 px-3 sm:px-4 py-3 border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                   activeTab === tab.id
                     ? 'border-primary-600 text-primary-600'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="font-medium">{tab.label}</span>
+                <span className="font-medium text-sm sm:text-base">{tab.label}</span>
               </button>
             )
           })}
@@ -673,8 +673,8 @@ const AdminPanel = () => {
 
                   <div className="space-y-3">
                     {weeks.map((week) => (
-                      <div key={week.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div>
+                      <div key={week.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg gap-3">
+                        <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{week.title}</h3>
                           <p className="text-sm text-gray-600">{week.description}</p>
                           <p className="text-xs text-gray-500 mt-1">
@@ -682,7 +682,7 @@ const AdminPanel = () => {
                             {format(new Date(week.end_date), 'dd MMM yyyy', { locale: fr })}
                           </p>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 self-end sm:self-center">
                           <button
                             onClick={() => openModal('week', week)}
                             className="p-2 text-primary-600 hover:bg-primary-50 rounded"
@@ -715,8 +715,8 @@ const AdminPanel = () => {
 
                   <div className="space-y-3">
                     {chapters.map((chapter) => (
-                      <div key={chapter.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div>
+                      <div key={chapter.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg gap-3">
+                        <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{chapter.title}</h3>
                           <p className="text-sm text-gray-600">
                             {chapter.book} {chapter.chapter_number}
@@ -725,7 +725,7 @@ const AdminPanel = () => {
                             Semaine: {chapter.weeks?.title || 'Non assigné'}
                           </p>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 self-end sm:self-center">
                           <button
                             onClick={() => openModal('chapter', chapter)}
                             className="p-2 text-primary-600 hover:bg-primary-50 rounded"
