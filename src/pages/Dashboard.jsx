@@ -26,22 +26,24 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       // Fetch current week
-      const { data: weekData } = await supabase
+      const { data: weekData, error: weekError } = await supabase
         .from('weeks')
         .select('*, chapters(*)')
         .gte('end_date', new Date().toISOString())
         .order('start_date', { ascending: true })
         .limit(1)
-        .single()
+        .maybeSingle()
 
-      setCurrentWeek(weekData)
+      if (!weekError && weekData) {
+        setCurrentWeek(weekData)
+      }
 
       // Fetch verse of the day
-      const { data: verseData } = await supabase
+      const { data: verseData, error: verseError } = await supabase
         .from('daily_verses')
         .select('*')
         .eq('date', format(new Date(), 'yyyy-MM-dd'))
-        .single()
+        .maybeSingle()
 
       setVerseOfDay(verseData)
 
@@ -138,19 +140,88 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Current Week */}
+      {/* Meditation Message for the Week */}
+      {currentWeek && (
+        <div className="card bg-gradient-to-br from-gold-50 via-primary-50 to-blue-50 border-2 border-gold-300">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-500 rounded-full mb-2">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                📖 Chapitres de la Semaine
+              </h2>
+              <p className="text-lg text-gray-700 mb-1">
+                {format(new Date(currentWeek.start_date), 'dd MMM', { locale: fr })} - 
+                {format(new Date(currentWeek.end_date), 'dd MMM yyyy', { locale: fr })}
+              </p>
+              <h3 className="text-xl font-semibold text-primary-700 mb-3">
+                {currentWeek.title}
+              </h3>
+              <p className="text-gray-600 max-w-2xl mx-auto mb-4">
+                {currentWeek.description}
+              </p>
+            </div>
+            
+            {/* Meditation Call to Action */}
+            <div className="bg-white/80 backdrop-blur rounded-xl p-6 max-w-3xl mx-auto">
+              <p className="text-lg font-medium text-gray-800 mb-4">
+                📚 Chapitres à lire et méditer cette semaine
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-600 mb-6">
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-2xl">📚</span>
+                  <span>Lire attentivement</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-2xl">💭</span>
+                  <span>Réfléchir profondément</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-2xl">✍️</span>
+                  <span>Partager vos réflexions</span>
+                </div>
+              </div>
+              
+              {/* Chapters to Meditate */}
+              {currentWeek.chapters && currentWeek.chapters.length > 0 && (
+                <div className="space-y-3">
+                  <p className="font-semibold text-gray-900 mb-3">
+                    📖 Chapitres à faire cette semaine :
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentWeek.chapters.map((chapter) => (
+                      <Link
+                        key={chapter.id}
+                        to={`/chapter/${chapter.id}`}
+                        className="flex items-center justify-between bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg p-4 hover:shadow-lg transition-all transform hover:scale-105"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <BookOpen className="h-5 w-5" />
+                          <span className="font-medium">{chapter.title}</span>
+                        </div>
+                        <span className="text-sm">Commencer →</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Current Week - Simplified Version */}
       {currentWeek && (
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Chapitre de la semaine</h2>
+            <h2 className="text-xl font-bold text-gray-900">Progression de la semaine</h2>
             <span className="text-sm text-gray-500">
               {format(new Date(currentWeek.start_date), 'dd MMM', { locale: fr })} - 
               {format(new Date(currentWeek.end_date), 'dd MMM yyyy', { locale: fr })}
             </span>
           </div>
           <div className="bg-primary-50 rounded-lg p-4">
-            <h3 className="font-semibold text-primary-900 mb-2">{currentWeek.title}</h3>
-            <p className="text-gray-700 mb-4">{currentWeek.description}</p>
             <div className="space-y-2">
               {currentWeek.chapters?.map((chapter) => (
                 <Link
