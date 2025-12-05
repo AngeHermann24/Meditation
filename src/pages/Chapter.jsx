@@ -259,34 +259,7 @@ const Chapter = () => {
           </div>
         )}
 
-        {/* Meditation Guide OIA */}
-        {chapter.meditation_guide && (
-          <div className="mt-6 bg-gradient-to-br from-gold-50 to-primary-50 rounded-lg p-6 border-2 border-gold-200">
-            <h3 className="font-bold text-xl text-gray-900 mb-4 flex items-center space-x-2">
-              <span className="text-2xl">🙏</span>
-              <span>Guide de Méditation OIA</span>
-            </h3>
-            <div className="bg-white rounded-lg p-5 shadow-sm">
-              <div className="whitespace-pre-wrap text-gray-800 leading-relaxed space-y-4">
-                {chapter.meditation_guide.split('\n\n').map((section, idx) => (
-                  <div key={idx} className="space-y-2">
-                    {section.split('\n').map((line, lineIdx) => {
-                      const isHeader = line.startsWith('O :') || line.startsWith('I :') || line.startsWith('A :')
-                      return (
-                        <p key={lineIdx} className={isHeader ? 'font-bold text-lg text-primary-700 mt-4 first:mt-0' : 'text-gray-700 ml-4'}>
-                          {line}
-                        </p>
-                      )
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-4 text-sm text-gray-600 italic">
-              💡 Prenez le temps de méditer sur ces questions pour approfondir votre compréhension
-            </div>
-          </div>
-        )}
+
 
         {/* User Meditation Responses */}
         {chapter.meditation_guide && (
